@@ -3,14 +3,14 @@ name: Build Android Shared Library
 on:
   push:
     branches: [ "main" ]
-  workflow_dispatch: # Allows you to trigger the build manually with a button click
+  workflow_dispatch: # Allows you to manually trigger the build with a button click
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. Pull your C++ files into the virtual machine
+    # 1. Pull your files from the repository into the virtual machine
     - name: Checkout Code
       uses: actions/checkout@v4
 
@@ -20,10 +20,10 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y g++-aarch64-linux-gnu
 
-    # 3. Compile your menu.cpp into the native .so file
+    # 3. Automatically find and compile your C++ files into the native .so file
     - name: Compile .so File
       run: |
-        aarch64-linux-gnu-g++ -shared -fPIC -o libmenu.so menu.cpp
+        find . -name "*.cpp" -exec aarch64-linux-gnu-g++ -shared -fPIC -o libmenu.so {} +
 
     # 4. Upload the finished file so you can download it to your PC
     - name: Upload Finished Binary Artifact
