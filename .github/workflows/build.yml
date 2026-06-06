@@ -3,7 +3,7 @@ name: Build Android Shared Library
 on:
   push:
     branches: [ "main" ]
-  workflow_dispatch: # Allows you to manually trigger the build with a button click
+  workflow_dispatch:
 
 jobs:
   build:
@@ -20,12 +20,23 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y g++-aarch64-linux-gnu
 
-    # 3. Automatically find and compile your C++ files into the native .so file
+    # 3. Download official Dear ImGui source files directly into the workspace
+    - name: Download Dear ImGui Source
+      run: |
+        wget https://raw.githubusercontent.com/ocornut/imgui/master/imgui.h
+        wget https://raw.githubusercontent.com/ocornut/imgui/master/imgui.cpp
+        wget https://raw.githubusercontent.com/ocornut/imgui/master/imgui_draw.cpp
+        wget https://raw.githubusercontent.com/ocornut/imgui/master/imgui_widgets.cpp
+        wget https://raw.githubusercontent.com/ocornut/imgui/master/imgui_tables.cpp
+        wget https://raw.githubusercontent.com/ocornut/imgui/master/imgui_internal.h
+        wget https://raw.githubusercontent.com/ocornut/imgui/master/imconfig.h
+
+    # 4. Automatically find and compile all C++ files into the native .so file
     - name: Compile .so File
       run: |
         find . -name "*.cpp" -exec aarch64-linux-gnu-g++ -shared -fPIC -o libmenu.so {} +
 
-    # 4. Upload the finished file so you can download it to your PC
+    # 5. Upload the finished file so you can download it to your PC
     - name: Upload Finished Binary Artifact
       uses: actions/upload-artifact@v4
       with:
